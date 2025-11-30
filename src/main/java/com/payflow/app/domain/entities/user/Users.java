@@ -2,6 +2,7 @@ package com.payflow.app.domain.entities.user;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 public class Users {
@@ -19,4 +21,5 @@ public class Users {
 
     private String name;
     private String email;
+
 }
