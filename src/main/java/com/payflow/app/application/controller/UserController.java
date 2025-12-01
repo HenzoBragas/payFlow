@@ -1,12 +1,10 @@
-package com.payflow.app.application.controllers;
+package com.payflow.app.application.controller;
 
 import com.payflow.app.application.dto.user.UserRequest;
 import com.payflow.app.application.dto.user.UserResponse;
-import com.payflow.app.application.service.UserService;
-import com.payflow.app.infrastructure.repository.UserRepository;
+import com.payflow.app.domain.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,13 +18,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> cadastrar(@RequestBody  UserRequest req) {
-        service.create(req);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<UserResponse> cadastrar(@RequestBody UserRequest req) {
+       UserResponse newUser =  service.create(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> atualizar(@PathVariable Long id, @RequestBody  UserRequest req) {
+    public ResponseEntity<UserResponse> atualizar(@PathVariable Long id, @RequestBody UserRequest req) {
        UserResponse user =  service.atualizar(id, req);
         return ResponseEntity.ok(user);
     }

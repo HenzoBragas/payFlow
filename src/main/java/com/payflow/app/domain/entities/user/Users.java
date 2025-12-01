@@ -1,6 +1,7 @@
 package com.payflow.app.domain.entities.user;
 
 
+import com.payflow.app.domain.entities.enums.ROLES;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Users {
+public class Users{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +22,9 @@ public class Users {
 
     private String name;
     private String email;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private ROLES userRoles;
 
 }
