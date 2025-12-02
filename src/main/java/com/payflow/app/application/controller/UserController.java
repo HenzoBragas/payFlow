@@ -18,13 +18,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> cadastrar(@RequestBody UserRequest req) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest req) {
        UserResponse newUser =  service.create(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> atualizar(@PathVariable Long id, @RequestBody UserRequest req) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest req) {
        UserResponse user =  service.atualizar(id, req);
         return ResponseEntity.ok(user);
     }

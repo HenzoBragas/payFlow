@@ -20,6 +20,10 @@ public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String cod;
+
     private String name;
     private String description;
     private Double price;
@@ -29,5 +33,8 @@ public class Plan {
 
     @Enumerated(EnumType.STRING)
     private StatusPlans statusPlans;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
 }
