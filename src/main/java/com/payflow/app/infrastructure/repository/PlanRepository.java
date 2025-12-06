@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Long> {
 
-    Optional<Plan> findByCode(String code);
+    Optional<Plan> findByCod(String cod);
 
     List<Plan> findAllByActiveTrue();
     List<Plan> findAllByActiveFalse();

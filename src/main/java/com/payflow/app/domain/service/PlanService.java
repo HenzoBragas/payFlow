@@ -26,7 +26,7 @@ public class PlanService {
     }
 
     public PlanResponse create(PlanRequest req) {
-        if(repository.findByCode(req.cod()).isPresent())
+        if(repository.findByCod(req.cod()).isPresent())
             throw new RuntimeException("Email ja cadastrado no sistema");
 
         Plan newPlan = mapper.toEntity(req);

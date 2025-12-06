@@ -27,12 +27,11 @@ public class Subscription {
 
     @ManyToOne
     @JoinColumn(name = "plan_id")
-    private Plan plan;
+    private Plan planId;
 
-    private LocalDate  startDate;
+    private LocalDate startDate;
     private LocalDate nextBillingDate;
 
     @Enumerated(EnumType.STRING)
-    private StatusSubscription statusSubscription;
-
+    private StatusSubscription statusSubscription = StatusSubscription.ACTIVE;
 }

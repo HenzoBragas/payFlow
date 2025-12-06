@@ -2,7 +2,6 @@ package com.payflow.app.domain.entities.plans;
 
 
 import com.payflow.app.domain.entities.enums.PlanPeriod;
-import com.payflow.app.domain.entities.enums.StatusPlans;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,10 +30,6 @@ public class Plan {
     @Enumerated(EnumType.STRING)
     private PlanPeriod period;
 
-    @Enumerated(EnumType.STRING)
-    private StatusPlans statusPlans;
-
     @Column(nullable = false)
     private Boolean active = true;
-
 }

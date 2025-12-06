@@ -22,7 +22,7 @@ public class PlanController {
     }
 
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<List<PlanResponse>> listPlans() {
         return ResponseEntity.status(HttpStatus.OK).body(service.toList());
     }
@@ -57,7 +57,7 @@ public class PlanController {
 
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivatePlan(@PathVariable Long id) {
-        service.setActive(id, true);
+        service.setActive(id, false);
         return ResponseEntity.noContent().build();
     }
 

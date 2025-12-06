@@ -1,0 +1,9 @@
+CREATE TABLE plans (
+    id BIGSERIAL PRIMARY KEY,
+    cod VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    description  VARCHAR(100) NOT NULL,
+    price  NUMERIC(10,2) NOT NULL,
+    period VARCHAR(100) NOT NULL,
+    status_plan BOOLEAN DEFAULT TRUE
+);
