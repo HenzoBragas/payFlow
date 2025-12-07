@@ -4,5 +4,5 @@ import com.payflow.app.domain.entities.enums.StatusSubscription;
 
 import java.time.LocalDate;
 
-public record SubsResponse(Long id, Long userId, Long planId, LocalDate startDate, LocalDate nextBillingDate, StatusSubscription statusSubscription) {
+public record SubsResponse(Long id, String userName, String  planName, LocalDate startDate, LocalDate nextBillingDate, StatusSubscription statusSubscription) {
 }

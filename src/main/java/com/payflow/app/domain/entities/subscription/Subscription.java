@@ -33,5 +33,5 @@ public class Subscription {
     private LocalDate nextBillingDate;
 
     @Enumerated(EnumType.STRING)
-    private StatusSubscription statusSubscription = StatusSubscription.ACTIVE;
+    private StatusSubscription statusSubscription;
 }

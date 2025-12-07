@@ -25,6 +25,10 @@ public class PlanService {
         this.mapper = mapper;
     }
 
+    public List<PlanResponse> toList() {
+        return convertToDto(repository.findAll());
+    }
+
     public PlanResponse create(PlanRequest req) {
         if(repository.findByCod(req.cod()).isPresent())
             throw new RuntimeException("Email ja cadastrado no sistema");
@@ -50,9 +54,6 @@ public class PlanService {
         soft.setActive(value);
     }
 
-    public List<PlanResponse> toList() {
-        return convertToDto(repository.findAll());
-    }
 
     public List<PlanResponse> toActiveList() {
         return convertToDto(repository.findAllByActiveTrue());
