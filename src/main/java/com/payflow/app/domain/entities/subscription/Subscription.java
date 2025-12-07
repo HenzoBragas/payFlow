@@ -4,6 +4,7 @@ import com.payflow.app.domain.entities.enums.StatusSubscription;
 import com.payflow.app.domain.entities.plans.Plan;
 import com.payflow.app.domain.entities.user.Users;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,11 +24,11 @@ public class Subscription {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Users userId;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "plan_id")
-    private Plan planId;
+    private Plan plan;
 
     private LocalDate startDate;
     private LocalDate nextBillingDate;

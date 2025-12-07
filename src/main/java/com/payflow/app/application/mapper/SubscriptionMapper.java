@@ -12,16 +12,15 @@ import org.mapstruct.ReportingPolicy;
 
 public interface SubscriptionMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "planId", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "plan", ignore = true)
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "nextBillingDate", ignore = true)
     @Mapping(target = "statusSubscription", ignore = true)
     Subscription toEntity(SubsRequest dto);
 
-    @Mapping(target = "userName", source = "userId.name")
-    @Mapping(target = "planName", source = "planId.name")
+    @Mapping(target = "userName", source = "user.name")
+    @Mapping(target = "planName", source = "plan.name")
     SubsResponse toDto(Subscription entity);
 }
 

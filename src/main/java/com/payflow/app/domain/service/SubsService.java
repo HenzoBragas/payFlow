@@ -1,18 +1,23 @@
 package com.payflow.app.domain.service;
 
+import com.payflow.app.application.dto.billing.BillingRequest;
 import com.payflow.app.application.dto.subscription.SubsRequest;
 import com.payflow.app.application.dto.subscription.SubsResponse;
 import com.payflow.app.application.mapper.SubscriptionMapper;
+import com.payflow.app.domain.entities.billing.Billing;
 import com.payflow.app.domain.entities.enums.StatusSubscription;
 import com.payflow.app.domain.entities.plans.Plan;
 import com.payflow.app.domain.entities.subscription.Subscription;
 import com.payflow.app.domain.entities.user.Users;
+import com.payflow.app.infrastructure.rabbitMQ.RabbitMQConfig;
 import com.payflow.app.infrastructure.repository.PlanRepository;
 import com.payflow.app.infrastructure.repository.SubscriptionRepository;
 import com.payflow.app.infrastructure.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.catalina.User;
+import org.slf4j.Logger;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,13 +30,15 @@ public class SubsService {
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
     private final SubscriptionMapper mapper;
+    private final RabbitTemplate rabbitTemplate;
 
 
-    public SubsService(SubscriptionRepository subscriptionRepository, UserRepository userRepository, PlanRepository planRepository, SubscriptionMapper mapper) {
+    public SubsService(SubscriptionRepository subscriptionRepository, UserRepository userRepository, PlanRepository planRepository, SubscriptionMapper mapper, RabbitTemplate rabbitTemplate) {
         this.subscriptionRepository = subscriptionRepository;
         this.userRepository = userRepository;
         this.planRepository = planRepository;
         this.mapper = mapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public List<SubsResponse> toList(Long userId) {
@@ -55,13 +62,25 @@ public class SubsService {
 
         Subscription sub = mapper.toEntity(req);
 
-        sub.setUserId(user);
-        sub.setPlanId(plan);
+        sub.setUser(user);
+        sub.setPlan(plan);
         sub.setStartDate(LocalDate.now());
         sub.setNextBillingDate(calculateNextBillingDate(plan));
         sub.setStatusSubscription(StatusSubscription.PENDING_PAYMENT);
 
         subscriptionRepository.save(sub);
+
+        // CRIA EVENTO PARA O RABBITMQ
+        BillingRequest billingRequest =  new BillingRequest( sub.getUser().getId(),
+                sub.getId());
+
+        // Enviar mensagem para RabbitMQ
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.BILLING_EXCHANGE,
+                RabbitMQConfig.BILLING_ROUTING_KEY,
+                billingRequest
+        );
+
         return mapper.toDto(sub);
     }
 
