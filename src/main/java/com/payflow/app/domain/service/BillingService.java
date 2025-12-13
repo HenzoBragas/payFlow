@@ -3,7 +3,7 @@ package com.payflow.app.domain.service;
 import com.payflow.app.application.dto.billing.BillingRequest;
 import com.payflow.app.application.dto.billing.BillingResponse;
 import com.payflow.app.application.dto.pay.PaidResponse;
-import com.payflow.app.application.dto.pay.WebhookRequest;
+import com.payflow.app.application.dto.pay.WebhookPaymentRequest;
 import com.payflow.app.application.mapper.BillingMapper;
 import com.payflow.app.domain.entities.billing.Billing;
 import com.payflow.app.domain.entities.enums.BillingStatus;
@@ -82,7 +82,7 @@ public class BillingService {
         );
     }
 
-    public void processWebhook(WebhookRequest req) {
+    public void processWebhook(WebhookPaymentRequest req) {
 
         Billing billing = billingRepository.findById(req.billingId())
                 .orElseThrow(() -> new RuntimeException("Fatura não encontrada"));

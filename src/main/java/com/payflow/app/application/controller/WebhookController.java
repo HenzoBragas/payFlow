@@ -1,6 +1,6 @@
 package com.payflow.app.application.controller;
 
-import com.payflow.app.application.dto.pay.WebhookRequest;
+import com.payflow.app.application.dto.pay.WebhookPaymentRequest;
 import com.payflow.app.domain.service.BillingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class WebhookController {
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<Void> receive(@RequestBody WebhookRequest request) {
+    public ResponseEntity<Void> receive(@RequestBody WebhookPaymentRequest request) {
         service.processWebhook(request);
         return ResponseEntity.ok().build();
     }
