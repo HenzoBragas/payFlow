@@ -19,8 +19,11 @@ public interface BillingMapper {
     @Mapping(target = "status", ignore = true)
     Billing toEntity(BillingRequest dto);
 
-    @Mapping(target = "userName", source = "user.name")
-    @Mapping(target = "subscriptionName", source = "subscription.plan.name")
+
+    @Mapping(source = "user.id", target = "idUser")
+    @Mapping(source = "user.name", target = "userName")
+    @Mapping(source = "subscription.id", target = "idSubscription")
+    @Mapping(source = "subscription.plan.name", target = "subscriptionName")
     BillingResponse toDto(Billing entity);
 
 }

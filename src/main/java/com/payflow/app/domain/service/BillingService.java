@@ -2,6 +2,8 @@ package com.payflow.app.domain.service;
 
 import com.payflow.app.application.dto.billing.BillingRequest;
 import com.payflow.app.application.dto.billing.BillingResponse;
+import com.payflow.app.application.dto.pay.PaidResponse;
+import com.payflow.app.application.dto.pay.WebhookRequest;
 import com.payflow.app.application.mapper.BillingMapper;
 import com.payflow.app.domain.entities.billing.Billing;
 import com.payflow.app.domain.entities.enums.BillingStatus;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BillingService {
@@ -58,6 +61,45 @@ public class BillingService {
         }
     }
 
+
+    public PaidResponse pay(Long billingId) {
+
+        Billing billing = billingRepository.findById(billingId)
+                .orElseThrow(() -> new RuntimeException("Fatura não encontrada"));
+
+        // gera transaction fake
+        String transactionId = "tx_" + UUID.randomUUID();
+
+        // status fica pendente
+        billing.setStatus(BillingStatus.PENDING);
+        billingRepository.save(billing);
+
+        return new PaidResponse(
+                billing.getId(),
+                "https://fake-gateway/pay/" + transactionId,
+                transactionId,
+                billing.getStatus()
+        );
+    }
+
+    public void processWebhook(WebhookRequest req) {
+
+        Billing billing = billingRepository.findById(req.billingId())
+                .orElseThrow(() -> new RuntimeException("Fatura não encontrada"));
+
+        if (req.event().equalsIgnoreCase("payment_approved")) {
+            billing.setStatus(BillingStatus.PAID);
+            billing.setPaymentDate(LocalDate.now());
+        }
+
+        if (req.event().equalsIgnoreCase("payment_failed")) {
+            billing.setStatus(BillingStatus.FAILED);
+        }
+
+        billingRepository.save(billing);
+    }
+
+
     public List<BillingResponse> toList(Long userId) {
         List<Billing> billings;
 
@@ -71,11 +113,14 @@ public class BillingService {
         return convertToDto(billings);
     }
 
-    public BillingResponse list(Long billingId) {
+    public BillingResponse getById(Long billingId) {
         Billing billing = findBillingById(billingId);
 
         return mapper.toDto(billing);
     }
+
+
+
 
     private List<BillingResponse> convertToDto(List<Billing> entities) {
         return entities.stream()

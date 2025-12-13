@@ -55,7 +55,7 @@ public class SubsService {
         return convertToDto(subs);
     }
 
-
+    //CRIAR ASSINATURA
     public SubsResponse createSubscription(SubsRequest req) {
         Users user = findUserById(req.userId());
         Plan plan = findPlanById(req.planId());
