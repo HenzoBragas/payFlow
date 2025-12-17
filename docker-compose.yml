@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: payflow-postgres
+    environment:
+      POSTGRES_DB: payflow
+      POSTGRES_USER: payflow
+      POSTGRES_PASSWORD: payflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: payflow-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  payflow-app:
+    build: .
+    container_name: payflow-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payflow
+      SPRING_DATASOURCE_USERNAME: payflow
+      SPRING_DATASOURCE_PASSWORD: payflow
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+
+volumes:
+  postgres_data:

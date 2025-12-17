@@ -1,169 +1,245 @@
-PayFlow
+# PayFlow
 
-Sistema de gerenciamento de assinaturas, faturamento e pagamentos simulados, construído em Java Spring Boot com integração de filas assíncronas via RabbitMQ.
+Sistema de gerenciamento de **assinaturas, faturamento e pagamentos simulados**, desenvolvido em **Java com Spring Boot**, com **processamento assíncrono via RabbitMQ**.
 
-🏗 Tecnologias utilizadas
+O projeto foi criado com foco em **boas práticas de arquitetura backend**, **POO**, **mensageria**, **testes unitários** e **simulação de um fluxo real de pagamento**.
 
-Backend: Java 23, Spring Boot 4
+---
+## 🎯 Objetivo do Projeto
 
-Banco de dados: PostgreSQL
+Este projeto tem como objetivo demonstrar:
 
-ORM: Spring Data JPA / Hibernate
+* Arquitetura backend bem estruturada
+* Uso de mensageria com RabbitMQ
+* Processamento assíncrono
+* Boas práticas com Spring Boot
+* Testes unitários com Mockito
+* Simulação realista de um fluxo de pagamentos
 
-Mensageria: RabbitMQ
+---
 
-Testes unitários: JUnit 6, Mockito
+🚀 **Projeto ideal para estudo, portfólio e avaliação de nível backend Java.**
 
-Mapeamento DTO: MapStruct
+## 🏗️ Tecnologias Utilizadas
 
-Controle de versão: Git + GitHub
+### Backend
 
-📌 Descrição do projeto
+* Java 17
+* Spring Boot
+* Spring Web
+* Spring Data JPA
+* Hibernate
 
-O PayFlow é um sistema de gestão de assinaturas e faturamento que permite:
+### Banco de Dados
 
-Cadastro de usuários e planos de assinatura.
+* PostgreSQL
+* Flyway Migrations
 
-Criação de assinaturas vinculadas a usuários e planos.
+### Mensageria
 
-Geração automática de faturas (Billing) associadas às assinaturas.
+* RabbitMQ
 
-Simulação de pagamentos via endpoint /billing/{id}/pay.
+### Testes
 
-Validação de pagamentos através de webhook.
+* JUnit
+* Mockito
 
-Processamento assíncrono de eventos via RabbitMQ.
+### Outros
 
-Mudança automática do status da fatura (PENDING, PAID, FAILED) de acordo com o evento de pagamento.
+* MapStruct (mapeamento DTO)
+* Lombok
+* Docker
+* Git & GitHub
 
-Testes unitários simulando cenários de pagamento aprovado e falho.
+---
 
-⚡ Funcionalidades principais
-1. Assinaturas
+## 📌 Descrição do Projeto
 
-Um usuário pode ter um ou mais planos.
+O **PayFlow** é um sistema de gestão de assinaturas e faturamento que permite:
 
-Cada plano gera faturas periódicas (Billing).
+* Cadastro de usuários e planos de assinatura
+* Criação de assinaturas vinculadas a usuários e planos
+* Geração automática de faturas (**Billing**) associadas às assinaturas
+* Simulação de pagamentos via endpoint REST
+* Validação de pagamentos através de **webhook**
+* Processamento assíncrono de eventos com **RabbitMQ**
+* Atualização automática do status das faturas
+* Testes unitários cobrindo cenários de sucesso e falha no pagamento
 
-2. Faturas (Billing)
+---
 
-Status: PENDING, PAID, FAILED, OVERDUE.
+## ⚡ Funcionalidades Principais
 
-Possui data de vencimento e valor.
+### 1️⃣ Assinaturas
 
-Pode ser paga via endpoint POST /billing/{billingId}/pay.
+* Um usuário pode possuir um ou mais planos
+* Cada plano gera faturas periódicas
 
-3. Pagamento simulado
+### 2️⃣ Faturas (Billing)
 
-Ao criar pagamento, é gerado um link fake e uma transactionId única.
+Cada fatura possui:
 
-Status inicial da fatura: PENDING.
+* Valor
+* Data de vencimento
+* Status:
 
-Webhook simula confirmação ou falha do pagamento:
+  * `PENDING`
+  * `PAID`
+  * `FAILED`
+  * `OVERDUE`
 
+A fatura pode ser paga via:
+
+```
+POST /billing/{billingId}/pay
+```
+
+---
+
+### 3️⃣ Pagamento Simulado
+
+Ao criar um pagamento:
+
+* É gerado um **paymentUrl fake**
+* É criada uma **transactionId única**
+* O status inicial da fatura permanece como `PENDING`
+
+Exemplo de resposta:
+
+```json
 {
-"billingId": 1,
-"event": "payment_approved",
-"transactionId": "tx_123"
+  "billingId": 1,
+  "paymentUrl": "https://fake-gateway/pay/tx_123",
+  "transactionId": "tx_123",
+  "billingStatus": "PENDING"
 }
+```
 
-4. Integração assíncrona
+---
 
-RabbitMQ é usado para simular eventos de pagamento.
+### 4️⃣ Webhook de Pagamento
 
-Permite testar processamento assíncrono e webhooks de forma realista.
+O webhook simula a confirmação do gateway de pagamento:
 
-🛠 Estrutura do projeto
+```json
+{
+  "billingId": 1,
+  "event": "payment_approved",
+  "transactionId": "tx_123"
+}
+```
+
+Eventos possíveis:
+
+* `payment_approved`
+* `payment_failed`
+
+Ações realizadas:
+
+* Atualiza o status da fatura para `PAID` ou `FAILED`
+* Registra a data do pagamento
+
+---
+
+### 5️⃣ Processamento Assíncrono
+
+* Eventos de pagamento são enviados para o **RabbitMQ**
+* O consumidor processa os eventos de forma assíncrona
+* Simula um fluxo real de integração com gateways externos
+
+---
+
+## 🛠️ Estrutura do Projeto
+
+```
 com.payflow.app
-├─ application
-│  ├─ controller           # Controllers REST
-│  ├─ dto                  # DTOs de request e response
-│  └─ mapper               # MapStruct mappers
-├─ domain
-│  ├─ entities             # Entidades JPA
-│  ├─ enums                # Enumerações (BillingStatus)
-│  └─ service              # Lógica de negócio
-├─ infrastructure
-│  └─ repository           # Repositórios Spring Data JPA
-└─ tests
-└─ service              # Testes unitários com Mockito
+├── application
+│   ├── controller        # Controllers REST
+│   ├── dto               # DTOs de request e response
+│   └── mapper            # MapStruct mappers
+│
+├── domain
+│   ├── entities          # Entidades JPA
+│   ├── enums             # Enumerações (BillingStatus)
+│   └── service           # Regras de negócio
+│
+├── infrastructure
+│   └── repository        # Repositórios JPA
+│
+└── tests
+    └── service           # Testes unitários com Mockito
+```
 
-🔗 Endpoints principais
-Método	Endpoint	Descrição
-GET	/billing	Lista todas as faturas (opcional por userId)
-GET	/billing/{billingId}	Consulta uma fatura pelo ID
-POST	/billing/{billingId}/pay	Cria pagamento simulado (gera paymentUrl e transactionId)
-POST	/webhook	Recebe evento de pagamento (aprovado ou falho)
-Exemplo de POST /billing/{billingId}/pay
+---
 
-Request:
+## 🔗 Endpoints Principais
 
-{}
+| Método | Endpoint                 | Descrição                                    |
+| ------ | ------------------------ | -------------------------------------------- |
+| GET    | /billing                 | Lista todas as faturas (opcional por userId) |
+| GET    | /billing/{billingId}     | Consulta uma fatura pelo ID                  |
+| POST   | /billing/{billingId}/pay | Cria pagamento simulado                      |
+| POST   | /webhook                 | Recebe evento de pagamento                   |
 
+---
 
-Response:
+## 🧪 Testes Unitários
 
-{
-"billingId": 1,
-"paymentUrl": "https://fake-gateway/pay/tx_123",
-"transactionId": "tx_123",
-"billingStatus": "PENDING"
-}
+Os testes são escritos utilizando **JUnit** e **Mockito**, simulando dependências como repositórios e mensageria.
 
-Exemplo de Webhook
+### Cenários testados
 
-Request:
+* Pagamento aprovado → fatura marcada como `PAID`
+* Pagamento falho → fatura marcada como `FAILED`
 
-{
-"billingId": 1,
-"event": "payment_approved",
-"transactionId": "tx_123"
-}
+### Exemplo de Teste
 
-
-Ação:
-
-Altera status da fatura para PAID ou FAILED de acordo com o evento.
-
-Registra data do pagamento.
-
-🧪 Testes
-
-Testes unitários com JUnit 6 e Mockito.
-
-Cenários testados:
-
-Pagamento aprovado → fatura marcada como PAID.
-
-Pagamento falho → fatura marcada como FAILED.
-
-Exemplo de teste com Mockito:
-
+```java
 @Test
 void should_mark_billing_as_failed_when_payment_fails() {
-when(billingRepository.findById(1L)).thenReturn(Optional.of(billing));
-WebhookPaymentRequest request = new WebhookPaymentRequest(1L, "payment_failed", "tx_123");
-billingService.processWebhook(request);
-assertEquals(BillingStatus.FAILED, billing.getStatus());
-verify(billingRepository).save(billing);
+    when(billingRepository.findById(1L)).thenReturn(Optional.of(billing));
+
+    WebhookPaymentRequest request =
+        new WebhookPaymentRequest(1L, "payment_failed", "tx_123");
+
+    billingService.processWebhook(request);
+
+    assertEquals(BillingStatus.FAILED, billing.getStatus());
+    verify(billingRepository).save(billing);
 }
+```
 
-💻 Como rodar o projeto
+---
 
-Clonar repositório:
+## 💻 Como Rodar o Projeto
 
+### 1️⃣ Clonar o repositório
+
+```bash
 git clone https://github.com/seu-usuario/payflow.git
+```
 
+### 2️⃣ Configurar o Banco de Dados
 
-Configurar PostgreSQL e criar banco payflow.
+* Criar um banco PostgreSQL chamado `payflow`
+* Ajustar as credenciais no `application.properties`
 
-Configurar RabbitMQ local ou docker.
+### 3️⃣ Configurar o RabbitMQ
 
-Ajustar application.properties com credenciais do banco e RabbitMQ.
+* Rodar localmente **ou** via Docker
 
-Rodar projeto:
+### 4️⃣ Executar o Projeto
 
+```bash
 mvn spring-boot:run
+```
+
+### 5️⃣ Testar os Endpoints
+
+* Postman
+* Insomnia
+* Thunder Client
+
+---
 
 
-Testar endpoints com Postman ou Insomnia.
