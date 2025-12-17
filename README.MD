@@ -2,23 +2,24 @@
 
 Sistema de gerenciamento de **assinaturas, faturamento e pagamentos simulados**, desenvolvido em **Java com Spring Boot**, com **processamento assíncrono via RabbitMQ**.
 
-O projeto foi criado com foco em **boas práticas de arquitetura backend**, **POO**, **mensageria**, **testes unitários** e **simulação de um fluxo real de pagamento**.
+O projeto foi criado com foco em **boas práticas de arquitetura backend**, **Programação Orientada a Objetos (POO)**, **mensageria**, **testes unitários** e **simulação de um fluxo real de pagamento**, sendo ideal para estudo e portfólio.
 
 ---
+
 ## 🎯 Objetivo do Projeto
 
-Este projeto tem como objetivo demonstrar:
+Demonstrar, na prática:
 
 * Arquitetura backend bem estruturada
 * Uso de mensageria com RabbitMQ
-* Processamento assíncrono
+* Processamento assíncrono de eventos
 * Boas práticas com Spring Boot
 * Testes unitários com Mockito
 * Simulação realista de um fluxo de pagamentos
 
----
-
 🚀 **Projeto ideal para estudo, portfólio e avaliação de nível backend Java.**
+
+---
 
 ## 🏗️ Tecnologias Utilizadas
 
@@ -88,7 +89,7 @@ Cada fatura possui:
   * `FAILED`
   * `OVERDUE`
 
-A fatura pode ser paga via:
+Pagamento via endpoint:
 
 ```
 POST /billing/{billingId}/pay
@@ -119,7 +120,7 @@ Exemplo de resposta:
 
 ### 4️⃣ Webhook de Pagamento
 
-O webhook simula a confirmação do gateway de pagamento:
+Simula a confirmação do gateway de pagamento:
 
 ```json
 {
@@ -185,7 +186,7 @@ com.payflow.app
 
 ## 🧪 Testes Unitários
 
-Os testes são escritos utilizando **JUnit** e **Mockito**, simulando dependências como repositórios e mensageria.
+Testes escritos com **JUnit** e **Mockito**, simulando dependências como repositórios e mensageria.
 
 ### Cenários testados
 
@@ -211,28 +212,60 @@ void should_mark_billing_as_failed_when_payment_fails() {
 
 ---
 
-## 💻 Como Rodar o Projeto
+## 💻 Como Rodar o Projeto (Docker)
 
-### 1️⃣ Clonar o repositório
+Este projeto já está **totalmente configurado para execução via Docker**, não sendo necessário instalar Java, Maven, PostgreSQL ou RabbitMQ localmente.
+
+---
+
+### 1️⃣ Pré-requisitos
+
+* Docker
+* Docker Compose
+
+---
+
+### 2️⃣ Clonar o repositório
 
 ```bash
 git clone https://github.com/seu-usuario/payflow.git
+cd payflow
 ```
 
-### 2️⃣ Configurar o Banco de Dados
+---
 
-* Criar um banco PostgreSQL chamado `payflow`
-* Ajustar as credenciais no `application.properties`
+### 3️⃣ Subir a aplicação com Docker
 
-### 3️⃣ Configurar o RabbitMQ
-
-* Rodar localmente **ou** via Docker
-
-### 4️⃣ Executar o Projeto
+Na raiz do projeto, execute:
 
 ```bash
-mvn spring-boot:run
+docker compose up --build
 ```
+
+Ou em segundo plano:
+
+```bash
+docker compose up -d --build
+```
+
+Este comando irá subir automaticamente:
+
+* Aplicação Spring Boot
+* PostgreSQL
+* RabbitMQ
+
+---
+
+### 4️⃣ Acessos
+
+* **API:** [http://localhost:8080](http://localhost:8080)
+* **RabbitMQ Management:** [http://localhost:15672](http://localhost:15672)
+
+  * usuário: `guest`
+  * senha: `guest`
+* **PostgreSQL:** localhost:5432
+
+---
 
 ### 5️⃣ Testar os Endpoints
 
@@ -242,4 +275,8 @@ mvn spring-boot:run
 
 ---
 
+### ℹ️ Observações
 
+* As **migrations do Flyway** são executadas automaticamente ao subir o container
+* Banco de dados e filas são inicializados via Docker Compose
+* Ideal para execução local, testes técnicos e demonstração de projeto
